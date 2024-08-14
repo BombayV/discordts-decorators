@@ -1,5 +1,7 @@
 import {IntentsBitField, Collection} from "discord.js";
 
+export type ActivityType = "online" | "idle" | "dnd" | "invisible";
+
 export type BotManagerOptions = {
   id: string,
   token: string,
