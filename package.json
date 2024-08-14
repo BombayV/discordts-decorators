@@ -1,0 +1,36 @@
+{
+  "name": "discordts-decorators",
+  "version": "1.0.0",
+  "description": "A simple library to create discord bots using typescript TC39 decorators",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc-watch -p tsconfig.json --onSuccess \"node --enable-source-maps --experimental-specifier-resolution=node ./dist/index.js\""
+  },
+  "repository": "https://github.com/bombayv/discordts-decorators",
+  "keywords": [
+    "discord",
+    "discord.js",
+    "typescript",
+    "decorators",
+    "bot"
+  ],
+  "author": "bombayv",
+  "license": "MIT",
+  "packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "uuid": "^10.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4"
+  }
+}

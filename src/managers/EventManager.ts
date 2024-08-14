@@ -1,33 +1,3 @@
-# discordts-decorators
-A discordjs package that uses TC39 decorator pattern.
-
-## Examples
-
-### Command
-```ts
-import { Injections } from "../decorators/discord.decorator.js";
-import { CommandInteraction } from "discord.js";
-
-const { Discord, Command, StringOption } = Injections();
-
-@Discord
-class Ping {
-  @Command('Ping the bot')
-  public static async run(interaction: CommandInteraction) {
-    await interaction.reply('Pong!');
-  }
-
-  @Command('Ping the bot with a message')
-  @StringOption('message', 'The message to send', true)
-  public static async runWithMessage(interaction: CommandInteraction) {
-    const message = interaction.options.getString('message');
-    await interaction.reply(`Pong! ${message}`);
-  }
-}
-```
-
-### Event
-```ts
 import { Injections } from "../decorators/discord.decorator.js";
 import {Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 
@@ -97,4 +67,3 @@ export class EventManager {
 }
 
 export default EventManager;
-```
