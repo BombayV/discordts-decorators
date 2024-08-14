@@ -1,11 +1,11 @@
 # discordts-decorators
-A discordjs package that uses TC39 decorator pattern.
+A discordjs package that uses TC39 decorator pattern. This package is a wrapper for discord.js that allows you to use decorators to create commands and events.
 
 ## Examples
 
 ### Command
 ```ts
-import { Injections } from "../decorators/discord.decorator.js";
+import { Injections } from "discordts-decorators";
 import { CommandInteraction } from "discord.js";
 
 const { Discord, Command, StringOption } = Injections();
@@ -28,7 +28,7 @@ class Ping {
 
 ### Event
 ```ts
-import { Injections } from "../decorators/discord.decorator.js";
+import { Injections } from "discordts-decorators";
 import {Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 
 const { Discord, Event } = Injections();
@@ -97,4 +97,40 @@ export class EventManager {
 }
 
 export default EventManager;
+```
+
+### Bot Initialization
+```ts
+import {ActivityType, IntentsBitField} from "discord.js";
+import { BotManager } from "discordts-decorators";
+
+const DiscordBot = BotManager.getInstance();
+
+const intents = new IntentsBitField([
+  'Guilds',
+  'GuildMembers',
+  'GuildMessages',
+  'GuildMessageReactions',
+  'GuildPresences',
+  'DirectMessages',
+  'DirectMessageReactions',
+  'MessageContent'
+]);
+
+DiscordBot.setPrivateData({
+  id: '',
+  token: '',
+  intents,
+  name: 'Discord Bot'
+})
+
+await DiscordBot.buildClient();
+await DiscordBot.login();
+
+DiscordBot.setPresence('online', {
+  name: 'Discord Bot',
+  type: ActivityType.Playing
+})
+
+await DiscordBot.refreshCommands();
 ```
