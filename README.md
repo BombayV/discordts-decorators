@@ -137,6 +137,11 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.1.11
+```
+- Release new build
+```
+
 1.1.1
 ```
 - Set metadata on options to be optional
