@@ -1,6 +1,6 @@
-import {IntentsBitField, Collection} from "discord.js";
+import {IntentsBitField, Collection, ClientEvents} from "discord.js";
 
-export type ActivityType = "online" | "idle" | "dnd" | "invisible";
+export type BotState = "online" | "idle" | "dnd" | "invisible";
 
 export type BotManagerOptions = {
   id: string,
@@ -35,6 +35,7 @@ type CommandOptions = {
   channel_types?: number[],
   custom_id?: string,
   placeholder?: string,
+  autocomplete?: boolean,
   options?: StringOption[],
 }
 

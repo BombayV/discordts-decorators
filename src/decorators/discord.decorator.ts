@@ -1,5 +1,6 @@
 import { v4 } from 'uuid'
-import {Choice, CommandInjection} from "../../types";
+import {Choice, CommandInjection} from "../types.js";
+import {logger} from "../utils";
 
 const INJECTIONS = new WeakMap();
 
@@ -18,6 +19,7 @@ export const Injections = () => {
     Class.__id = v4() as string;
     Class.__name = Class.name.toLowerCase();
     Class.__description = `Commands for ${Class.__name}`
+    logger(`Class ${Class.__name} injected with ${commandInjections.length} commands`, 'blue')
     return Class;
   }
 
@@ -36,7 +38,7 @@ export const Injections = () => {
           cooldown,
           ephemeral
         })
-        // `Command ${key} with 0 options injected in class ${target.constructor.name}`
+        logger(`Command ${key} with 0 options injected in class ${target.constructor.name}`, 'yellow')
       } else {
         const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
         const foundCommand = commandInjections[commandIndex];
@@ -50,13 +52,20 @@ export const Injections = () => {
             return 0;
           });
         }
+
+        logger(`Command ${key} with ${foundCommand.options.length} options injected in class ${target.constructor.name}`, 'yellow')
       }
 
       return descriptor;
     }
   }
 
-  function StringOption(name: string, description: string, required: boolean = false, choices?: Choice[] | null, min_length?: number, max_length?: number) {
+  function StringOption(name: string, description: string, required: boolean = false, metadata: {
+    choices?: Choice[] | null,
+    autocomplete?: boolean,
+    min_length?: number,
+    max_length?: number
+  }) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
       const command = checkCommandExists(commandInjections, key)
       if (!command) {
@@ -75,16 +84,21 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices,
-        min_length,
-        max_length,
+        choices: metadata.choices,
+        autocomplete: metadata.autocomplete,
+        min_length: metadata.min_length,
+        max_length: metadata.max_length,
         type: 3,
       })
       return descriptor;
     }
   }
 
-  function IntegerOption(name: string, description: string, required: boolean = false, choices?: Choice[] | null, min_value?: number, max_value?: number) {
+  function IntegerOption(name: string, description: string, required: boolean = false, metadata: {
+    choices?: Choice[] | null,
+    min_value?: number,
+    max_value?: number
+  }) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
       const command = checkCommandExists(commandInjections, key)
       if (!command) {
@@ -103,9 +117,9 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices,
-        min_value,
-        max_value,
+        choices: metadata.choices,
+        min_value: metadata.min_value,
+        max_value: metadata.max_value,
         type: 4
       })
       return descriptor;
@@ -238,7 +252,11 @@ export const Injections = () => {
     }
   }
 
-  function NumberOption(name: string, description: string, required: boolean = false, choices?: Choice[] | null, min_value?: number, max_value?: number) {
+  function NumberOption(name: string, description: string, required: boolean = false, metadata: {
+    choices?: Choice[] | null,
+    min_value?: number,
+    max_value?: number
+  }) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
       const command = checkCommandExists(commandInjections, key)
       if (!command) {
@@ -257,9 +275,9 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices,
-        min_value,
-        max_value,
+        choices: metadata.choices,
+        min_value: metadata.min_value,
+        max_value: metadata.max_value,
         type: 10
       })
       return descriptor;
@@ -299,6 +317,7 @@ export const Injections = () => {
         run: descriptor.value,
       })
 
+      logger(`Event ${key} injected in class ${_.constructor.name}`, 'green')
       return descriptor;
     }
   }

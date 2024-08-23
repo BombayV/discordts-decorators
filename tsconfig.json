@@ -11,7 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "sourceMap": true
+    "sourceMap": true,
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]

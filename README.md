@@ -5,10 +5,10 @@ A discordjs package that uses TC39 decorator pattern. This package is a wrapper 
 
 ### Command
 ```ts
-import DiscordTsDecorators from "discordts-decorators";
+import { Injections } from "discordts-decorators";
 import { CommandInteraction } from "discord.js";
 
-const { Discord, Command, StringOption } = DiscordTsDecorators.Injections();
+const { Discord, Command, StringOption } = Injections();
 
 @Discord
 class Ping {
@@ -28,10 +28,10 @@ class Ping {
 
 ### Event
 ```ts
-import DiscordTsDecorators from "discordts-decorators";
-import {Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import { Injections } from "discordts-decorators";
+import { Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
 
-const { Discord, Event } = DiscordTsDecorators.Injections();
+const { Discord, Event } = Injections();
 
 @Discord
 export class EventManager {
@@ -101,10 +101,11 @@ export default EventManager;
 
 ### Bot Initialization
 ```ts
-import {ActivityType, IntentsBitField} from "discord.js";
-import DiscordTsDecorators from "discordts-decorators";
+import { IntentsBitField } from "discord.js";
+import { ActivityType } from "discord-api-types/v10";
+import { BotManager } from "discordts-decorators";
 
-const DiscordBot = DiscordTsDecorators.BotManager.getInstance();
+const DiscordBot = BotManager.getInstance();
 
 const intents = new IntentsBitField([
   'Guilds',
@@ -118,8 +119,8 @@ const intents = new IntentsBitField([
 ]);
 
 DiscordBot.setPrivateData({
-  id: '',
-  token: '',
+  id: '', // Bot ID
+  token: '', // Bot Token
   intents,
   name: 'Discord Bot'
 })
@@ -133,4 +134,18 @@ DiscordBot.setPresence('online', {
 })
 
 await DiscordBot.refreshCommands();
+```
+
+### Version
+1.1.0
+```
+- Added better logging for commands and events
+- Added better error handling for commands and events
+- Moved choices, max_length, and min_length to metadata.choices, metadata.max_length, and metadata.min_length
+- Update typings for new discord.js version
+```
+
+1.0.0
+```
+- Initial release
 ```

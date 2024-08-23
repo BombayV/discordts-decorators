@@ -1,7 +1,9 @@
-import { REST, ActivityOptions, Client, Collection } from "discord.js";
+import {REST, Client, Collection, ActivityOptions} from "discord.js";
+import { ActivityType } from "discord-api-types/v10";
 import { Routes } from 'discord-api-types/v10';
 import { Injections } from "../decorators/discord.decorator.js";
-import { BotCommand, BotEvent, CommandInjection, BotManagerOptions, ActivityType } from "../../types.js";
+import { BotCommand, BotEvent, CommandInjection, BotManagerOptions, BotState } from "../types.js";
+import {logger} from "../utils";
 
 const { getInjections } = Injections();
 
@@ -15,7 +17,7 @@ export class BotManager {
   private static events = new Collection<string, BotEvent<EventListener>>();
 
   private constructor() {
-    console.log('[BotManager] Instance created.');
+    logger('[BotManager] Instance created.', 'green');
   }
 
   private buildEvents() {
@@ -64,7 +66,7 @@ export class BotManager {
       BotManager.REST = new REST().setToken(BotManager.privateData.token);
       await this.build();
     } catch (error) {
-      console.log("[BotManager] buildClient error: ", error);
+      logger(`[BotManager] "buildClient" error: ${error}`, 'red');
     }
     return this;
   }
@@ -81,12 +83,12 @@ export class BotManager {
       }
 
       BotManager.client.login(BotManager.privateData.token).then(() => {
-        console.log(`[BotManager] Logged in as ${BotManager.client.user.tag}`);
+        logger(`[BotManager] Logged in as ${BotManager.client.user.tag}`, 'green');
       }).catch((error) => {
-        console.error(`[BotManager] Login error: ${error}`);
+        logger(`[BotManager] Error logging in: ${error}`, 'red');
       });
     } catch (error) {
-      console.error("[BotManager] login error: ", error);
+      logger(`[BotManager] "login" error: ${error}`, 'red');
     }
     return this;
   }
@@ -101,9 +103,9 @@ export class BotManager {
       await BotManager.REST.put(Routes.applicationCommands(BotManager.privateData.id), {
         body: [...BotManager.commands.values()]
       });
-      console.log('[BotManager] Commands refreshed.');
+      logger('[BotManager] Commands refreshed.', 'green');
     } catch (error) {
-      console.error("[BotManager] refreshCommands error: ", error);
+      logger('[BotManager] Error "refreshCommands" commands.', 'red');
     }
   }
 
@@ -121,10 +123,10 @@ export class BotManager {
 
   /**
    * Set the presence of the bot.
-   * @param status {ActivityType}
+   * @param status {BotState}
    * @param activity {ActivityOptions | null}
    */
-  public setPresence(status: ActivityType, activity: ActivityOptions | null = null) {
+  public setPresence(status: BotState, activity: ActivityOptions | null = null) {
     if (BotManager.client === null) {
       new Error('[BotManager] Client is null.');
     }
