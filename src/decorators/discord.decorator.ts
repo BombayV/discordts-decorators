@@ -60,7 +60,7 @@ export const Injections = () => {
     }
   }
 
-  function StringOption(name: string, description: string, required: boolean = false, metadata: {
+  function StringOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
     autocomplete?: boolean,
     min_length?: number,
@@ -84,17 +84,17 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices: metadata.choices,
-        autocomplete: metadata.autocomplete,
-        min_length: metadata.min_length,
-        max_length: metadata.max_length,
+        choices: metadata?.choices,
+        autocomplete: metadata?.autocomplete,
+        min_length: metadata?.min_length,
+        max_length: metadata?.max_length,
         type: 3,
       })
       return descriptor;
     }
   }
 
-  function IntegerOption(name: string, description: string, required: boolean = false, metadata: {
+  function IntegerOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
     min_value?: number,
     max_value?: number
@@ -117,9 +117,9 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices: metadata.choices,
-        min_value: metadata.min_value,
-        max_value: metadata.max_value,
+        choices: metadata?.choices,
+        min_value: metadata?.min_value,
+        max_value: metadata?.max_value,
         type: 4
       })
       return descriptor;
@@ -252,7 +252,7 @@ export const Injections = () => {
     }
   }
 
-  function NumberOption(name: string, description: string, required: boolean = false, metadata: {
+  function NumberOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
     min_value?: number,
     max_value?: number
@@ -275,9 +275,9 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices: metadata.choices,
-        min_value: metadata.min_value,
-        max_value: metadata.max_value,
+        choices: metadata?.choices,
+        min_value: metadata?.min_value,
+        max_value: metadata?.max_value,
         type: 10
       })
       return descriptor;

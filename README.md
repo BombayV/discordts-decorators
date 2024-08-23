@@ -137,6 +137,11 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.1.1
+```
+- Set metadata on options to be optional
+```
+
 1.1.0
 ```
 - Added better logging for commands and events

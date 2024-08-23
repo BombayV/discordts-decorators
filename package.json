@@ -1,6 +1,6 @@
 {
   "name": "discordts-decorators",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A simple library to create discord bots using typescript TC39 decorators with discord.js.",
   "type": "module",
   "main": "./dist/index.js",
@@ -12,7 +12,10 @@
   "scripts": {
     "build": "tsup"
   },
-  "repository": "https://github.com/bombayv/discordts-decorators",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bombayv/discordts-decorators.git"
+  },
   "keywords": [
     "discord",
     "discord.js",
