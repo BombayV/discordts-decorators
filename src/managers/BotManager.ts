@@ -186,6 +186,8 @@ export class BotManager {
       name: Class.__name,
       description: Class.__description,
       options: commands,
+      integration_types: Class.__integration_types,
+      contexts: Class.__context,
     });
 
     return this;

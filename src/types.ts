@@ -52,8 +52,6 @@ export interface CommandInjection {
   kind: "command" | "event",
   name: string,
   run: Function,
-  integration_types?: IntegrationType[],
-  contexts?: ContextType[],
   description?: string,
   options?: CommandOptions[],
   type?: number,
@@ -65,6 +63,8 @@ export interface BotCommand {
   name: string,
   description: string,
   options: CommandOptions[],
+  integration_types: IntegrationType[],
+  contexts: ContextType[],
 }
 
 export interface BotEvent<T> {

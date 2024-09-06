@@ -137,6 +137,12 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.2.3
+```
+- Moved context and integration to command instead of subcommand
+- Added context/integration to variables
+```
+
 1.2.2
 ```
 - Fixed context and integration with discord.js

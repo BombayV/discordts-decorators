@@ -20,6 +20,29 @@ export const Injections = () => {
     Class.__name = Class.name.toLowerCase();
     Class.__description = `Commands for ${Class.__name}`
 
+
+    if (!Class.integration_types || Class.integration_types.length === 0) {
+      logger(`Class ${Class.__name} is missing integration_types variable. Defaulting to BOTH`, 'red')
+      Class.__integration_types = [0, 1];
+    } else {
+      Class.__integration_types = Class.integration_types;
+      if (Class.integration_types.length > 2) {
+        logger(`Class ${Class.__name} has more than 2 integration_types. Defaulting to BOTH`, 'red')
+        Class.__integration_types = [0, 1];
+      }
+    }
+
+    if (!Class.context || Class.context.length === 0) {
+      logger(`Class ${Class.__name} is missing context variable. Defaulting to GUILD`, 'red')
+      Class.__context = [0];
+    } else {
+      Class.__context = Class.context;
+      if (Class.context.length > 3) {
+        logger(`Class ${Class.__name} has more than 3 context types. Defaulting to GUILD`, 'red')
+        Class.__context = [0];
+      }
+    }
+
     if (commandInjections.some((injection) => injection.kind === 'command'))
       logger(`Class ${Class.__name} injected with ${commandInjections.length} commands`, 'blue')
     else
@@ -37,8 +60,6 @@ export const Injections = () => {
           kind: 'command',
           name: key,
           description,
-          contexts: [],
-          integration_types: [0, 0],
           options: [],
           run: descriptor.value,
           type: 1,
@@ -67,60 +88,6 @@ export const Injections = () => {
     }
   }
 
-  function Integration(guild: boolean = true, user: boolean = false) {
-    return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          integration_types: [0, 0],
-          contexts: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const integrationToBeAdded: IntegrationType[] = [];
-      if (guild) integrationToBeAdded.push(0);
-      if (user) integrationToBeAdded.push(1);
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-
-      commandInjections[commandIndex].integration_types = integrationToBeAdded;
-
-      return descriptor
-    }
-  }
-
-  function Context(guild: boolean = true, botDm: boolean = false, privateChannel: boolean = false) {
-    return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          integration_types: [0, 0],
-          contexts: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const contextToBeAdded = [];
-      if (guild) contextToBeAdded.push(1);
-      if (botDm) contextToBeAdded.push(2);
-      if (privateChannel) contextToBeAdded.push(3);
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].contexts = contextToBeAdded;
-
-      return descriptor;
-    }
-  }
-
   function StringOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
     autocomplete?: boolean,
@@ -135,8 +102,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1,
         })
@@ -170,8 +135,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -200,8 +163,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -227,8 +188,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -254,8 +213,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -282,8 +239,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -309,8 +264,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -340,8 +293,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -370,8 +321,6 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
-          integration_types: [0, 0],
-          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -408,8 +357,6 @@ export const Injections = () => {
   return {
     Discord,
     Command,
-    Integration,
-    Context,
     StringOption,
     IntegerOption,
     BooleanOption,
