@@ -39,10 +39,22 @@ type CommandOptions = {
   options?: StringOption[],
 }
 
+export enum ContextChannelType {
+  GUILD = 0,
+  BOT_DM = 1,
+  PRIVATE_CHANNEL = 2,
+}
+
+type IntegrationType = 0 | 1;
+type ContextType = ContextChannelType.GUILD | ContextChannelType.BOT_DM | ContextChannelType.PRIVATE_CHANNEL;
+
+
 export interface CommandInjection {
   kind: "command" | "event",
   name: string,
   run: Function,
+  integration_types?: [IntegrationType, IntegrationType],
+  contexts?: ContextType[],
   description?: string,
   options?: CommandOptions[],
   type?: number,

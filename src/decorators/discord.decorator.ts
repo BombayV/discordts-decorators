@@ -60,6 +60,59 @@ export const Injections = () => {
     }
   }
 
+  function Integration(guild: boolean = true, user: boolean = false) {
+    return function (_: any, key: string, descriptor: PropertyDescriptor) {
+      const command = checkCommandExists(commandInjections, key)
+      if (!command) {
+        commandInjections.push({
+          kind: 'command',
+          name: key,
+          description: '',
+          options: [],
+          integration_types: [0, 0],
+          contexts: [],
+          run: descriptor.value,
+          type: 1
+        })
+      }
+
+      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
+      commandInjections[commandIndex].integration_types = [
+        guild ? 1 : 0,
+        user ? 1 : 0
+      ];
+
+      return descriptor
+    }
+  }
+
+  function Context(guild: boolean = true, botDm: boolean = false, privateChannel: boolean = false) {
+    return function (_: any, key: string, descriptor: PropertyDescriptor) {
+      const command = checkCommandExists(commandInjections, key)
+      if (!command) {
+        commandInjections.push({
+          kind: 'command',
+          name: key,
+          description: '',
+          options: [],
+          integration_types: [0, 0],
+          contexts: [],
+          run: descriptor.value,
+          type: 1
+        })
+      }
+
+      const contextToBeAdded = [];
+      if (guild) contextToBeAdded.push(1);
+      if (botDm) contextToBeAdded.push(2);
+      if (privateChannel) contextToBeAdded.push(3);
+      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
+      commandInjections[commandIndex].contexts = contextToBeAdded;
+
+      return descriptor;
+    }
+  }
+
   function StringOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
     autocomplete?: boolean,
@@ -74,6 +127,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1,
         })
@@ -107,6 +162,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -135,6 +192,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -160,6 +219,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -185,6 +246,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -211,6 +274,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -236,6 +301,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -265,6 +332,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -293,6 +362,8 @@ export const Injections = () => {
           name: key,
           description: '',
           options: [],
+          integration_types: [0, 0],
+          contexts: [],
           run: descriptor.value,
           type: 1
         })
@@ -329,6 +400,8 @@ export const Injections = () => {
   return {
     Discord,
     Command,
+    Integration,
+    Context,
     StringOption,
     IntegerOption,
     BooleanOption,

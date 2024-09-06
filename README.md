@@ -137,6 +137,12 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.2.0
+```
+- Added support for installable user applications
+- Added context to commands
+```
+
 1.1.12
 ```
 - Added guild refresh commands
