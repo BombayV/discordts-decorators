@@ -125,6 +125,22 @@ export class BotManager {
   }
 
   /**
+   * Removes all commands from the guild.
+   * @param guildId {string}
+   * @returns Promise<void>
+   */
+  public async removeGuildCommands(guildId: string) {
+    try {
+      await BotManager.REST.put(Routes.applicationGuildCommands(BotManager.privateData.id, guildId), {
+        body: []
+      });
+      logger('[BotManager] Guild commands removed.', 'green');
+    } catch (error) {
+      logger('[BotManager] Error "removeGuildCommands" commands.', 'red');
+    }
+  }
+
+  /**
    * Get the instance of the BotManager.
    * @returns BotManager
    */

@@ -137,6 +137,11 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.2.5
+```
+- Added ability to `removeGuildCommands` using BotManager
+```
+
 1.2.42
 ```
 - Revert log for commands and events
