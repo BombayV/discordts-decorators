@@ -1,5 +1,4 @@
 import {REST, Client, Collection, ActivityOptions} from "discord.js";
-import { ActivityType } from "discord-api-types/v10";
 import { Routes } from 'discord-api-types/v10';
 import { Injections } from "../decorators/discord.decorator.js";
 import { BotCommand, BotEvent, CommandInjection, BotManagerOptions, BotState } from "../types.js";
@@ -96,7 +95,7 @@ export class BotManager {
   /**
    * Refreshes the commands in the client.
    * Should only be needed when new commands are added.
-   * @returns void
+   * @returns Promise<void>
    */
   public async refreshCommands() {
     try {
@@ -106,6 +105,22 @@ export class BotManager {
       logger('[BotManager] Commands refreshed.', 'green');
     } catch (error) {
       logger('[BotManager] Error "refreshCommands" commands.', 'red');
+    }
+  }
+
+  /**
+   * Refreshes the commands in the client for a specific guild.
+   * @param guildId {string}
+   * @returns Promise<void>
+   */
+  public async refreshGuildCommands(guildId: string) {
+    try {
+      await BotManager.REST.put(Routes.applicationGuildCommands(BotManager.privateData.id, guildId), {
+        body: [...BotManager.commands.values()]
+      });
+      logger('[BotManager] Guild commands refreshed.', 'green');
+    } catch (error) {
+      logger('[BotManager] Error "refreshGuildCommands" commands.', 'red');
     }
   }
 
