@@ -137,6 +137,12 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.2.4
+```
+- Debug mode on global.Config.debug (default false)
+- Added debug log for commands and events
+```
+
 1.2.3
 ```
 - Moved context and integration to command instead of subcommand

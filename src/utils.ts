@@ -1,5 +1,10 @@
 type Colors = 'black' | 'red' | 'green' | 'yellow' | 'blue' | 'magenta' | 'cyan' | 'white' | 'default';
 
+let global: any = global || {};
+global.Config = {
+  debug: false,
+};
+
 const COLORS: {
   [key in Colors]: string;
 } = {
@@ -15,5 +20,11 @@ const COLORS: {
 };
 
 export const logger = (message: string, color: Colors = 'default') => {
-  console.log(`${COLORS[color]}${message}${COLORS.default}`);
+  if (!COLORS[color]) {
+    throw new Error(`Invalid color: ${color}`);
+  }
+
+  if (global.Config.debug) {
+    console.log(`${COLORS[color]}${message}${COLORS.default}`);
+  }
 };

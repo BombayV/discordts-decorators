@@ -20,33 +20,32 @@ export const Injections = () => {
     Class.__name = Class.name.toLowerCase();
     Class.__description = `Commands for ${Class.__name}`
 
-
-    if (!Class.integration_types || Class.integration_types.length === 0) {
-      logger(`Class ${Class.__name} is missing integration_types variable. Defaulting to BOTH`, 'red')
-      Class.__integration_types = [0, 1];
-    } else {
-      Class.__integration_types = Class.integration_types;
-      if (Class.integration_types.length > 2) {
-        logger(`Class ${Class.__name} has more than 2 integration_types. Defaulting to BOTH`, 'red')
+    if (commandInjections.some((injection) => injection.kind === 'command')) {
+      if (!Class.integration_types || Class.integration_types.length === 0) {
+        logger(`Class ${Class.__name} is missing integration_types variable. Defaulting to BOTH`, 'red')
         Class.__integration_types = [0, 1];
+      } else {
+        Class.__integration_types = Class.integration_types;
+        if (Class.integration_types.length > 2) {
+          logger(`Class ${Class.__name} has more than 2 integration_types. Defaulting to BOTH`, 'red')
+          Class.__integration_types = [0, 1];
+        }
       }
-    }
 
-    if (!Class.context || Class.context.length === 0) {
-      logger(`Class ${Class.__name} is missing context variable. Defaulting to GUILD`, 'red')
-      Class.__context = [0];
-    } else {
-      Class.__context = Class.context;
-      if (Class.context.length > 3) {
-        logger(`Class ${Class.__name} has more than 3 context types. Defaulting to GUILD`, 'red')
+      if (!Class.context || Class.context.length === 0) {
+        logger(`Class ${Class.__name} is missing context variable. Defaulting to GUILD`, 'red')
         Class.__context = [0];
+      } else {
+        Class.__context = Class.context;
+        if (Class.context.length > 3) {
+          logger(`Class ${Class.__name} has more than 3 context types. Defaulting to GUILD`, 'red')
+          Class.__context = [0];
+        }
       }
-    }
-
-    if (commandInjections.some((injection) => injection.kind === 'command'))
       logger(`Class ${Class.__name} injected with ${commandInjections.length} commands`, 'blue')
-    else
+    } else {
       logger(`Class ${Class.__name} injected with ${commandInjections.length} events`, 'blue')
+    }
 
     return Class;
   }

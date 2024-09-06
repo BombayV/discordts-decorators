@@ -1,6 +1,6 @@
 {
   "name": "discordts-decorators",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "A simple library to create discord bots using typescript TC39 decorators with discord.js.",
   "type": "module",
   "main": "./dist/index.js",
@@ -27,8 +27,8 @@
   "license": "MIT",
   "packageManager": "pnpm@9.6.0+sha256.dae0f7e822c56b20979bb5965e3b73b8bdabb6b8b8ef121da6d857508599ca35",
   "dependencies": {
-    "discord-api-types": "^0.37.97",
-    "discord.js": "^14.15.3",
+    "discord-api-types": "^0.37.100",
+    "discord.js": "^14.16.1",
     "uuid": "^10.0.0"
   },
   "devDependencies": {
