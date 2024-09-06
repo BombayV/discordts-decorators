@@ -137,6 +137,11 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.1.12
+```
+- Added guild refresh commands
+```
+
 1.1.11
 ```
 - Release new build
