@@ -11,10 +11,7 @@
     "forceConsistentCasingInFileNames": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "typeRoots": [
-      "src/global.d.ts"
-    ]
+    "sourceMap": true
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist", "tests"]
