@@ -137,6 +137,11 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.2.42
+```
+- Revert log for commands and events
+```
+
 1.2.4
 ```
 - Debug mode on global.Config.debug (default false)

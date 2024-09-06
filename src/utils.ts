@@ -15,9 +15,5 @@ const COLORS: {
 };
 
 export const logger = (message: string, color: Colors = 'default') => {
-  if (!COLORS[color]) {
-    throw new Error(`Invalid color: ${color}`);
-  }
-
   console.log(`${COLORS[color]}${message}${COLORS.default}`);
 };
