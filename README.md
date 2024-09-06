@@ -137,6 +137,12 @@ await DiscordBot.refreshCommands();
 ```
 
 ### Version
+1.2.2
+```
+- Fixed context and integration with discord.js
+- Fixed log for events/commands classes
+```
+
 1.2.0
 ```
 - Added support for installable user applications

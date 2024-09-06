@@ -45,15 +45,14 @@ export enum ContextChannelType {
   PRIVATE_CHANNEL = 2,
 }
 
-type IntegrationType = 0 | 1;
+export type IntegrationType = 0 | 1;
 type ContextType = ContextChannelType.GUILD | ContextChannelType.BOT_DM | ContextChannelType.PRIVATE_CHANNEL;
-
 
 export interface CommandInjection {
   kind: "command" | "event",
   name: string,
   run: Function,
-  integration_types?: [IntegrationType, IntegrationType],
+  integration_types?: IntegrationType[],
   contexts?: ContextType[],
   description?: string,
   options?: CommandOptions[],

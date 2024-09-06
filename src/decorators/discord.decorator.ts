@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import {Choice, CommandInjection} from "../types.js";
+import {Choice, CommandInjection, IntegrationType} from "../types.js";
 import {logger} from "../utils";
 
 const INJECTIONS = new WeakMap();
@@ -19,7 +19,12 @@ export const Injections = () => {
     Class.__id = v4() as string;
     Class.__name = Class.name.toLowerCase();
     Class.__description = `Commands for ${Class.__name}`
-    logger(`Class ${Class.__name} injected with ${commandInjections.length} commands`, 'blue')
+
+    if (commandInjections.some((injection) => injection.kind === 'command'))
+      logger(`Class ${Class.__name} injected with ${commandInjections.length} commands`, 'blue')
+    else
+      logger(`Class ${Class.__name} injected with ${commandInjections.length} events`, 'blue')
+
     return Class;
   }
 
@@ -32,6 +37,8 @@ export const Injections = () => {
           kind: 'command',
           name: key,
           description,
+          contexts: [],
+          integration_types: [0, 0],
           options: [],
           run: descriptor.value,
           type: 1,
@@ -76,11 +83,12 @@ export const Injections = () => {
         })
       }
 
+      const integrationToBeAdded: IntegrationType[] = [];
+      if (guild) integrationToBeAdded.push(0);
+      if (user) integrationToBeAdded.push(1);
       const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].integration_types = [
-        guild ? 1 : 0,
-        user ? 1 : 0
-      ];
+
+      commandInjections[commandIndex].integration_types = integrationToBeAdded;
 
       return descriptor
     }
