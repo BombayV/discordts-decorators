@@ -191,6 +191,9 @@ export class BotManager {
         commands.push(val);
         BotManager.subcommands.set(name, val);
         val.run.bind(instance);
+        if (val.autocomplete) {
+          val.autocomplete.bind(instance);
+        }
       }
     }
 

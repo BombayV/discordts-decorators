@@ -93,8 +93,7 @@ export const Injections = () => {
       // Check if command has string option with autocomplete
       if (command && command.options.some((option) => option.autocomplete)) {
         const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-
-        commandInjections[commandIndex].autocomplete = func;
+        commandInjections[commandIndex].autocomplete = func || descriptor.value;
       }
     }
   }
