@@ -1,7 +1,18 @@
 import {IntentsBitField, Collection, ClientEvents} from "discord.js";
 
-export type BotState = "online" | "idle" | "dnd" | "invisible";
+export enum ContextChannelType {
+  GUILD = 0,
+  BOT_DM = 1,
+  PRIVATE_CHANNEL = 2,
+}
 
+export type ContextType = ContextChannelType.GUILD | ContextChannelType.BOT_DM | ContextChannelType.PRIVATE_CHANNEL;
+export type BotState = "online" | "idle" | "dnd" | "invisible";
+export type IntegrationType = 0 | 1;
+export type Choice = {
+  name: string,
+  value: string
+}
 export type BotManagerOptions = {
   id: string,
   token: string,
@@ -9,10 +20,6 @@ export type BotManagerOptions = {
   name: string
 }
 
-export type Choice = {
-  name: string,
-  value: string
-}
 
 export type StringOption = {
   label: string,
@@ -38,15 +45,6 @@ type CommandOptions = {
   autocomplete?: boolean,
   options?: StringOption[],
 }
-
-export enum ContextChannelType {
-  GUILD = 0,
-  BOT_DM = 1,
-  PRIVATE_CHANNEL = 2,
-}
-
-export type IntegrationType = 0 | 1;
-type ContextType = ContextChannelType.GUILD | ContextChannelType.BOT_DM | ContextChannelType.PRIVATE_CHANNEL;
 
 export interface CommandInjection {
   kind: "command" | "event",

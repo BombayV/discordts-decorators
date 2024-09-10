@@ -8,20 +8,24 @@ A discordjs package that uses TC39 decorator pattern. This package is a wrapper 
 import { Injections } from "discordts-decorators";
 import { CommandInteraction } from "discord.js";
 
-const { Discord, Command, StringOption } = Injections();
+const { Discord, Command } = Injections();
 
 @Discord
-class Ping {
-  @Command('Ping the bot')
-  public static async run(interaction: CommandInteraction) {
-    await interaction.reply('Pong!');
-  }
+export class Fun {
+  // Read the documention for more information
+  // on how to use integration_types and context
+  // https://discord.com/developers/docs/interactions/application-commands#interaction-contexts
+  public static integration_types = [0, 1];
+  public static context = [0, 1, 2];
 
-  @Command('Ping the bot with a message')
-  @StringOption('message', 'The message to send', true)
-  public static async runWithMessage(interaction: CommandInteraction) {
-    const message = interaction.options.getString('message');
-    await interaction.reply(`Pong! ${message}`);
+  @Command('Ping the bot')
+  public static async ping(interaction: CommandInteraction) {
+    const { createdTimestamp } = interaction;
+    const reply = await interaction.editReply('Pinging...');
+    const messagePing = reply.createdTimestamp - createdTimestamp;
+    const websocketPing = interaction.client.ws.ping;
+
+    await interaction.editReply(`Pong!\n**Message Ping:** ${messagePing}ms\n**Websocket Ping:** ${websocketPing}ms`);
   }
 }
 ```
@@ -29,7 +33,12 @@ class Ping {
 ### Event
 ```ts
 import { Injections } from "discordts-decorators";
-import { Collection, CommandInteraction, CommandInteractionOptionResolver } from "discord.js";
+import {
+  Collection,
+  CommandInteraction,
+  CommandInteractionOptionResolver,
+  InteractionDeferReplyOptions
+} from "discord.js";
 
 const { Discord, Event } = Injections();
 
@@ -37,11 +46,11 @@ const { Discord, Event } = Injections();
 export class EventManager {
   @Event()
   public static async ready() {
-    console.log('Bot Events are ready');
+    console.log('Client is ready!');
   }
 
   @Event()
-  public static error(error: Error) {
+  public static async error(error: Error) {
     console.error(error);
   }
 
@@ -80,7 +89,7 @@ export class EventManager {
     // Command execution
     if (interaction.isCommand()) {
       try {
-        await interaction.deferReply({ ephemeral: command.ephemeral || false });
+        await interaction.deferReply({ ephemeral: command.ephemeral || false } as InteractionDeferReplyOptions);
         setTimeout(() => {
           if (!interaction.replied) {
             interaction.editReply('This interaction has expired.');
@@ -101,42 +110,50 @@ export default EventManager;
 
 ### Bot Initialization
 ```ts
-import { IntentsBitField } from "discord.js";
-import { ActivityType } from "discord-api-types/v10";
+import {IntentsBitField} from "discord.js";
 import { BotManager } from "discordts-decorators";
-
-const DiscordBot = BotManager.getInstance();
+import EventManager from "./events/EventManager.js";
+import Commands from "./commands/index.js";
 
 const intents = new IntentsBitField([
   'Guilds',
   'GuildMembers',
   'GuildMessages',
   'GuildMessageReactions',
+  'GuildModeration',
   'GuildPresences',
+  'GuildInvites',
   'DirectMessages',
   'DirectMessageReactions',
-  'MessageContent'
+  'MessageContent',
 ]);
 
+const DiscordBot = BotManager.getInstance();
+
 DiscordBot.setPrivateData({
-  id: '', // Bot ID
-  token: '', // Bot Token
+  id: 'bot id',
+  token: 'bot token',
   intents,
-  name: 'Discord Bot'
-})
+  name: 'VeryCoolName',
+}).create(EventManager);
+
+for (const command of Commands) {
+  DiscordBot.create(command);
+}
 
 await DiscordBot.buildClient();
 await DiscordBot.login();
-
-DiscordBot.setPresence('online', {
-  name: 'Discord Bot',
-  type: ActivityType.Playing
-})
-
-await DiscordBot.refreshCommands();
+DiscordBot.setPresence('idle', {
+  name: 'with discordts-decorators',
+});
 ```
 
 ### Version
+1.2.6
+```
+- Fixed log for commands and events
+```
+
 1.2.5
 ```
 - Added ability to `removeGuildCommands` using BotManager
