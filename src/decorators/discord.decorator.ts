@@ -110,6 +110,8 @@ export const Injections = () => {
         autocomplete: true,
         type: 3
       })
+
+      logger(`Autocomplete ${name} injected in class ${_.constructor.name}`, 'green')
       return descriptor;
     }
   }

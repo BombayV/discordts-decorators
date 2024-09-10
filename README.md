@@ -8,7 +8,7 @@ A discordjs package that uses TC39 decorator pattern. This package is a wrapper 
 import { Injections } from "discordts-decorators";
 import { CommandInteraction } from "discord.js";
 
-const { Discord, Command } = Injections();
+const { Discord, Command, Autocomplete } = Injections();
 
 @Discord
 export class Fun {
@@ -27,18 +27,37 @@ export class Fun {
 
     await interaction.editReply(`Pong!\n**Message Ping:** ${messagePing}ms\n**Websocket Ping:** ${websocketPing}ms`);
   }
+
+  @Command('Autocomplete test', 10, true)
+  @Autocomplete('test', 'Test autocomplete', true)
+  public static async autocompletetest(interaction: CommandInteraction | AutocompleteInteraction) {
+    if (interaction.isAutocomplete()) {
+      // @ts-ignore
+      await interaction.respond([
+        {
+          name: 'Test 1',
+          value: 'test1'
+        },
+        {
+          name: 'Test 2',
+          value: 'test2'
+        }
+      ]);
+    }
+  }
 }
 ```
 
 ### Event
 ```ts
-import { Injections } from "discordts-decorators";
+import {BotManager, Injections} from "discordts-decorators";
 import {
   Collection,
   CommandInteraction,
   CommandInteractionOptionResolver,
   InteractionDeferReplyOptions
 } from "discord.js";
+import {Media} from "../commands/Media.js";
 
 const { Discord, Event } = Injections();
 
@@ -52,6 +71,18 @@ export class EventManager {
   @Event()
   public static async error(error: Error) {
     console.error(error);
+    if (Media.currentMessage) {
+      await Media.currentMessage.edit('There was an error while executing this command!');
+
+      Media.currentMessage = null;
+    }
+  }
+
+  @Event()
+  public static async messageDelete(message) {
+    if (Media.currentMessage && message.id === Media.currentMessage.id) {
+      Media.currentMessage = null;
+    }
   }
 
   @Event()
@@ -61,6 +92,16 @@ export class EventManager {
 
     const command = client.commands.get(subcommmand);
     if (!command) return;
+
+    if (interaction.isAutocomplete()) {
+      try {
+        await command.autocomplete(interaction);
+      } catch (error) {
+        console.error(error);
+      }
+
+      return;
+    }
 
     // Cooldowns handling
     const cooldowns = client.cooldowns;

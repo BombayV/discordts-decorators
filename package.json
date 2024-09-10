@@ -1,6 +1,6 @@
 {
   "name": "discordts-decorators",
-  "version": "1.2.63",
+  "version": "1.2.65",
   "description": "A simple library to create discord bots using typescript TC39 decorators with discord.js.",
   "type": "module",
   "main": "./dist/index.js",
