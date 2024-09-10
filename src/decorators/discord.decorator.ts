@@ -87,20 +87,28 @@ export const Injections = () => {
     }
   }
 
-  function Autocomplete(func: Function) {
+  function Autocomplete(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
       const command = checkCommandExists(commandInjections, key)
-      // Check if command has string option with autocomplete
-      if (command && command.options.some((option) => option.autocomplete)) {
-        const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-        commandInjections[commandIndex].autocomplete = func || descriptor.value;
+      if (!command) {
+        commandInjections.push({
+          kind: 'command',
+          name: key,
+          description: '',
+          options: [],
+          run: descriptor.value,
+          type: 1
+        })
       }
+
+      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
+      commandInjections[commandIndex].autocomplete = descriptor.value;
+      return descriptor;
     }
   }
 
   function StringOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
-    autocomplete?: boolean,
     min_length?: number,
     max_length?: number
   }) {
@@ -123,7 +131,6 @@ export const Injections = () => {
         description,
         required,
         choices: metadata?.choices,
-        autocomplete: metadata?.autocomplete,
         min_length: metadata?.min_length,
         max_length: metadata?.max_length,
         type: 3,

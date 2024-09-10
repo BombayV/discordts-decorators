@@ -149,10 +149,15 @@ DiscordBot.setPresence('idle', {
 ```
 
 ### Version
+1.2.62
+```
+- Fixed bug with autocomplete
+```
+
 1.2.6
 ```
 - Fixed log for commands and events
-- Autcomplete decorator
+- Autocomplete decorator
 ```
 
 1.2.5

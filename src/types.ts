@@ -42,7 +42,6 @@ type CommandOptions = {
   channel_types?: number[],
   custom_id?: string,
   placeholder?: string,
-  autocomplete?: boolean,
   options?: StringOption[],
 }
 
