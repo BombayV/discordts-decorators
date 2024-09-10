@@ -103,6 +103,13 @@ export const Injections = () => {
 
       const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
       commandInjections[commandIndex].autocomplete = descriptor.value;
+      commandInjections[commandIndex].options.push({
+        name,
+        description,
+        required,
+        choices: [],
+        type: 3
+      })
       return descriptor;
     }
   }
