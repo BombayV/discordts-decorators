@@ -87,6 +87,18 @@ export const Injections = () => {
     }
   }
 
+  function Autocomplete(func: Function) {
+    return function (_: any, key: string, descriptor: PropertyDescriptor) {
+      const command = checkCommandExists(commandInjections, key)
+      // Check if command has string option with autocomplete
+      if (command && command.options.some((option) => option.autocomplete)) {
+        const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
+
+        commandInjections[commandIndex].autocomplete = func;
+      }
+    }
+  }
+
   function StringOption(name: string, description: string, required: boolean = false, metadata?: {
     choices?: Choice[] | null,
     autocomplete?: boolean,
@@ -356,6 +368,7 @@ export const Injections = () => {
   return {
     Discord,
     Command,
+    Autocomplete,
     StringOption,
     IntegerOption,
     BooleanOption,

@@ -50,6 +50,7 @@ export interface CommandInjection {
   kind: "command" | "event",
   name: string,
   run: Function,
+  autocomplete?: Function,
   description?: string,
   options?: CommandOptions[],
   type?: number,
