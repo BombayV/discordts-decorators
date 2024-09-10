@@ -152,6 +152,7 @@ DiscordBot.setPresence('idle', {
 1.2.6
 ```
 - Fixed log for commands and events
+- Autcomplete decorator
 ```
 
 1.2.5
