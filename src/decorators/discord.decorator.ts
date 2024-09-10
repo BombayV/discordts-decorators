@@ -107,7 +107,7 @@ export const Injections = () => {
         name,
         description,
         required,
-        choices: [],
+        autocomplete: true,
         type: 3
       })
       return descriptor;

@@ -39,6 +39,7 @@ type CommandOptions = {
   max_length?: number,
   min_value?: number,
   max_value?: number,
+  autocomplete?: boolean,
   channel_types?: number[],
   custom_id?: string,
   placeholder?: string,
