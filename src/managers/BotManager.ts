@@ -12,7 +12,6 @@ export class BotManager {
   private static privateData: BotManagerOptions | null = null;
   private static REST: REST | null = null;
   private static commands = new Collection<string, BotCommand>();
-  private static subcommands = new Collection<string, CommandInjection>();
   private static events = new Collection<string, BotEvent<EventListener>>();
 
   private constructor() {
@@ -28,7 +27,7 @@ export class BotManager {
   }
 
   private buildCommands() {
-    BotManager.client.commands = BotManager.subcommands;
+    BotManager.client.commands = BotManager.commands;
     return this;
   }
 
@@ -189,7 +188,6 @@ export class BotManager {
 
       if (kind === 'command') {
         commands.push(val);
-        BotManager.subcommands.set(name, val);
         val.run.bind(instance);
         if (val.autocomplete) {
           val.autocomplete.bind(instance);
