@@ -50,14 +50,13 @@ export class Fun {
 
 ### Event
 ```ts
-import {BotManager, Injections} from "discordts-decorators";
 import {
   Collection,
   CommandInteraction,
   CommandInteractionOptionResolver,
   InteractionDeferReplyOptions
-} from "discord.js";
-import {Media} from "../commands/Media.js";
+} from 'discord.js';
+import { Injections } from 'discordts-decorators';
 
 const { Discord, Event } = Injections();
 
@@ -71,26 +70,19 @@ export class EventManager {
   @Event()
   public static async error(error: Error) {
     console.error(error);
-    if (Media.currentMessage) {
-      await Media.currentMessage.edit('There was an error while executing this command!');
-
-      Media.currentMessage = null;
-    }
-  }
-
-  @Event()
-  public static async messageDelete(message) {
-    if (Media.currentMessage && message.id === Media.currentMessage.id) {
-      Media.currentMessage = null;
-    }
   }
 
   @Event()
   public static async interactionCreate(interaction: CommandInteraction) {
-    const {client } = interaction;
+    const { client } = interaction;
     const subcommmand = (interaction.options as CommandInteractionOptionResolver).getSubcommand();
+    const commandName = interaction.commandName;
 
-    const command = client.commands.get(subcommmand);
+    console.log(`Command: ${commandName} | Subcommand: ${subcommmand}`);
+
+    // console.log(client.commands)
+    const subcommands = client.commands.get(commandName).options;
+    const command = subcommands.find((cmd) => cmd.name === subcommmand);
     if (!command) return;
 
     if (interaction.isAutocomplete()) {
@@ -118,7 +110,7 @@ export class EventManager {
         const timeLeft = Math.round((expirationTime - now) / 1000);
         return interaction.reply({
           content: `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`,
-          ephemeral: true,
+          ephemeral: true
         });
       }
     }
