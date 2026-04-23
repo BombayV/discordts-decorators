@@ -182,7 +182,7 @@ export class BotManager {
       throw new Error('[BotManager] Client is null.');
     }
 
-    client.once('ready', () => {
+    client.once('clientReady', () => {
       client.user?.setPresence({
         activities: activity ? [activity] : [],
         status: status,

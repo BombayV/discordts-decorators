@@ -7,7 +7,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "outDir": "./dist",
-    "rootDir": "./",
+    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -17,8 +17,7 @@
     "emitDecoratorMetadata": true
   },
   "include": [
-    "src/**/*",
-    "index.ts"
+    "src/**/*"
   ],
   "exclude": [
     "node_modules",
