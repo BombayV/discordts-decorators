@@ -1,8 +1,8 @@
-import {REST, Client, Collection, ActivityOptions} from "discord.js";
+import {REST, Client, Collection, type ActivityOptions} from "discord.js";
 import { Routes } from 'discord-api-types/v10';
 import { Injections } from "../decorators/discord.decorator.js";
-import { BotCommand, BotEvent, CommandInjection, BotManagerOptions, BotState } from "../types.js";
-import {logger} from "../utils";
+import type { BotCommand, BotEvent, BotManagerOptions, BotState } from "../types";
+import {logger} from "../utils.js";
 
 const { getInjections } = Injections();
 
@@ -53,15 +53,16 @@ export class BotManager {
    */
   public async buildClient() {
     try {
-      if (BotManager.privateData === null) {
-        new Error('[BotManager] Private data is null.');
+      const data = BotManager.privateData;
+      if (!data) {
+        throw new Error('[BotManager] Private data is null.');
       }
 
       BotManager.client = new Client({
-        intents: BotManager.privateData?.intents,
+        intents: data.intents,
       });
 
-      BotManager.REST = new REST().setToken(BotManager.privateData.token);
+      BotManager.REST = new REST().setToken(data.token);
       await this.build();
     } catch (error) {
       logger(`[BotManager] "buildClient" error: ${error}`, 'red');
@@ -76,12 +77,19 @@ export class BotManager {
    */
   public async login() {
     try {
-      if (BotManager.client === null) {
-        new Error('BotManager client is null.');
+      const client = BotManager.client;
+      const data = BotManager.privateData;
+
+      if (!client) {
+        throw new Error('BotManager client is null.');
       }
 
-      BotManager.client.login(BotManager.privateData.token).then(() => {
-        logger(`[BotManager] Logged in as ${BotManager.client.user.tag}`, 'green');
+      if (!data) {
+        throw new Error('BotManager privateData is null.');
+      }
+
+      client.login(data.token).then(() => {
+        logger(`[BotManager] Logged in as ${client.user?.tag}`, 'green');
       }).catch((error) => {
         logger(`[BotManager] Error logging in: ${error}`, 'red');
       });
@@ -98,7 +106,11 @@ export class BotManager {
    */
   public async refreshCommands() {
     try {
-      await BotManager.REST.put(Routes.applicationCommands(BotManager.privateData.id), {
+      const rest = BotManager.REST;
+      const data = BotManager.privateData;
+      if (!rest || !data) throw new Error('[BotManager] REST client or private data is missing');
+
+      await rest.put(Routes.applicationCommands(data.id), {
         body: [...BotManager.commands.values()]
       });
       logger('[BotManager] Commands refreshed.', 'green');
@@ -114,7 +126,11 @@ export class BotManager {
    */
   public async refreshGuildCommands(guildId: string) {
     try {
-      await BotManager.REST.put(Routes.applicationGuildCommands(BotManager.privateData.id, guildId), {
+      const rest = BotManager.REST;
+      const data = BotManager.privateData;
+      if (!rest || !data) throw new Error('[BotManager] REST client or private data is missing');
+
+      await rest.put(Routes.applicationGuildCommands(data.id, guildId), {
         body: [...BotManager.commands.values()]
       });
       logger('[BotManager] Guild commands refreshed.', 'green');
@@ -130,7 +146,11 @@ export class BotManager {
    */
   public async removeGuildCommands(guildId: string) {
     try {
-      await BotManager.REST.put(Routes.applicationGuildCommands(BotManager.privateData.id, guildId), {
+      const rest = BotManager.REST;
+      const data = BotManager.privateData;
+      if (!rest || !data) throw new Error('[BotManager] REST client or private data is missing');
+
+      await rest.put(Routes.applicationGuildCommands(data.id, guildId), {
         body: []
       });
       logger('[BotManager] Guild commands removed.', 'green');
@@ -157,13 +177,14 @@ export class BotManager {
    * @param activity {ActivityOptions | null}
    */
   public setPresence(status: BotState, activity: ActivityOptions | null = null) {
-    if (BotManager.client === null) {
-      new Error('[BotManager] Client is null.');
+    const client = BotManager.client;
+    if (!client) {
+      throw new Error('[BotManager] Client is null.');
     }
 
-    BotManager.client.once('ready', () => {
-      BotManager.client.user.setPresence({
-        activities: [activity],
+    client.once('ready', () => {
+      client.user?.setPresence({
+        activities: activity ? [activity] : [],
         status: status,
       });
     });
@@ -203,6 +224,9 @@ export class BotManager {
       name: Class.__name,
       description: Class.__description,
       options: commands,
+      type: commands.length === 1 && commands[0].type !== 1 ? commands[0].type : 1,
+      nsfw: commands.some(c => c.nsfw),
+      default_member_permissions: commands.find(c => c.default_member_permissions)?.default_member_permissions,
       integration_types: Class.__integration_types,
       contexts: Class.__context,
     });

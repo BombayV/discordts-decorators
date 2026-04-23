@@ -1,4 +1,4 @@
-import {IntentsBitField, Collection, ClientEvents} from "discord.js";
+import {IntentsBitField, Collection, type ClientEvents} from "discord.js";
 
 export enum ContextChannelType {
   GUILD = 0,
@@ -43,7 +43,9 @@ type CommandOptions = {
   channel_types?: number[],
   custom_id?: string,
   placeholder?: string,
-  options?: StringOption[],
+  options?: any[],
+  name_localizations?: Record<string, string>,
+  description_localizations?: Record<string, string>
 }
 
 export interface CommandInjection {
@@ -56,6 +58,10 @@ export interface CommandInjection {
   type?: number,
   cooldown?: number,
   ephemeral?: boolean,
+  nsfw?: boolean,
+  default_member_permissions?: string,
+  name_localizations?: Record<string, string>,
+  description_localizations?: Record<string, string>
 }
 
 export interface BotCommand {
@@ -64,6 +70,11 @@ export interface BotCommand {
   options: CommandOptions[],
   integration_types: IntegrationType[],
   contexts: ContextType[],
+  type?: number,
+  nsfw?: boolean,
+  default_member_permissions?: string,
+  name_localizations?: Record<string, string>,
+  description_localizations?: Record<string, string>
 }
 
 export interface BotEvent<T> {

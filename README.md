@@ -6,13 +6,21 @@ A discordjs package that uses TC39 decorator pattern. This package is a wrapper 
 ### Command
 ```ts
 import { Injections } from "discordts-decorators";
-import { CommandInteraction } from "discord.js";
+import { CommandInteraction, PermissionFlagsBits } from "discord.js";
 
-const { Discord, Command, Autocomplete } = Injections();
+const { 
+  Discord, 
+  Command, 
+  Autocomplete, 
+  UserCommand, 
+  MessageCommand, 
+  NSFW, 
+  DefaultMemberPermissions 
+} = Injections();
 
 @Discord
 export class Fun {
-  // Read the documention for more information
+  // Read the documentation for more information
   // on how to use integration_types and context
   // https://discord.com/developers/docs/interactions/application-commands#interaction-contexts
   public static integration_types = [0, 1];
@@ -44,6 +52,23 @@ export class Fun {
         }
       ]);
     }
+  }
+
+  @UserCommand()
+  public static async reportUser(interaction: CommandInteraction) {
+    await interaction.reply('User reported!');
+  }
+
+  @MessageCommand()
+  public static async reportMessage(interaction: CommandInteraction) {
+    await interaction.reply('Message reported!');
+  }
+
+  @Command('Secret admin command')
+  @NSFW()
+  @DefaultMemberPermissions('0') // Equivalent to Administrator
+  public static async nsfwTest(interaction: CommandInteraction) {
+    await interaction.reply('You are verified as an admin inside an age-restricted channel.');
   }
 }
 ```

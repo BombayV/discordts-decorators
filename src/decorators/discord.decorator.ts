@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
-import {Choice, CommandInjection, IntegrationType} from "../types.js";
-import {logger} from "../utils";
+import type {Choice, CommandInjection} from "../types.js";
+import {logger} from "../utils.js";
 
 const INJECTIONS = new WeakMap();
 
@@ -10,6 +10,25 @@ const checkCommandExists = (commandInjections: CommandInjection[], key: string) 
 
 export const Injections = () => {
   const commandInjections: CommandInjection[] = [];
+
+  function getOrCreateCommand(key: string, descriptor: PropertyDescriptor) {
+    let command = checkCommandExists(commandInjections, key);
+    if (!command) {
+      command = {
+        kind: 'command',
+        name: key,
+        description: '',
+        options: [],
+        run: descriptor.value,
+        type: 1
+      };
+      commandInjections.push(command);
+    }
+    if (!command.options) {
+      command.options = [];
+    }
+    return command as CommandInjection & { options: any[] };
+  }
 
   // Adds class for usage in Discord.
   // Required for all commands and events
@@ -67,20 +86,18 @@ export const Injections = () => {
         })
         logger(`Command ${key} with 0 options injected in class ${target.constructor.name}`, 'yellow')
       } else {
-        const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-        const foundCommand = commandInjections[commandIndex];
-        foundCommand.description = description;
-        foundCommand.cooldown = cooldown;
-        foundCommand.ephemeral = ephemeral;
-        if (foundCommand.options && foundCommand.options.length > 1) {
-          foundCommand.options.sort((a, b) => {
+        command.description = description;
+        command.cooldown = cooldown;
+        command.ephemeral = ephemeral;
+        if (command.options && command.options.length > 1) {
+          command.options.sort((a, b) => {
             if (a.required) return -1;
             if (b.required) return 1;
             return 0;
           });
         }
 
-        logger(`Command ${key} with ${foundCommand.options.length} options injected in class ${target.constructor.name}`, 'yellow')
+        logger(`Command ${key} with ${command.options?.length ?? 0} options injected in class ${target.constructor.name}`, 'yellow')
       }
 
       return descriptor;
@@ -89,21 +106,9 @@ export const Injections = () => {
 
   function Autocomplete(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].autocomplete = descriptor.value;
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.autocomplete = descriptor.value;
+      command.options.push({
         name,
         description,
         required,
@@ -122,20 +127,8 @@ export const Injections = () => {
     max_length?: number
   }) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1,
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -154,20 +147,8 @@ export const Injections = () => {
     max_value?: number
   }) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -182,20 +163,8 @@ export const Injections = () => {
 
   function BooleanOption(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -207,20 +176,8 @@ export const Injections = () => {
 
   function UserOption(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -232,20 +189,8 @@ export const Injections = () => {
 
   function ChannelOption(name: string, description: string, required: boolean = false, channel_types?: number[]) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -258,20 +203,8 @@ export const Injections = () => {
 
   function RoleOption(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -283,20 +216,8 @@ export const Injections = () => {
 
   function MentionableOption(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -312,20 +233,8 @@ export const Injections = () => {
     max_value?: number
   }) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -340,20 +249,8 @@ export const Injections = () => {
 
   function AttachmentOption(name: string, description: string, required: boolean = false) {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
-      const command = checkCommandExists(commandInjections, key)
-      if (!command) {
-        commandInjections.push({
-          kind: 'command',
-          name: key,
-          description: '',
-          options: [],
-          run: descriptor.value,
-          type: 1
-        })
-      }
-
-      const commandIndex = commandInjections.findIndex((injection) => injection.name === key);
-      commandInjections[commandIndex].options.push({
+      const command = getOrCreateCommand(key, descriptor);
+      command.options.push({
         name,
         description,
         required,
@@ -363,15 +260,52 @@ export const Injections = () => {
     }
   }
 
-  function Event() {
+
+  function UserCommand() {
+    return function (target: any, key: string, descriptor: PropertyDescriptor) {
+      const command = getOrCreateCommand(key, descriptor);
+      command.type = 2; // USER command
+      command.description = ''; // Required to be empty for non-chat input
+      logger(`UserCommand ${key} injected in class ${target.constructor.name}`, 'yellow');
+      return descriptor;
+    }
+  }
+
+  function MessageCommand() {
+    return function (target: any, key: string, descriptor: PropertyDescriptor) {
+      const command = getOrCreateCommand(key, descriptor);
+      command.type = 3; // MESSAGE command
+      command.description = ''; // Required to be empty for non-chat input
+      logger(`MessageCommand ${key} injected in class ${target.constructor.name}`, 'yellow');
+      return descriptor;
+    }
+  }
+
+  function NSFW() {
     return function (_: any, key: string, descriptor: PropertyDescriptor) {
+      const command = getOrCreateCommand(key, descriptor);
+      command.nsfw = true;
+      return descriptor;
+    }
+  }
+
+  function DefaultMemberPermissions(permissions: string) {
+    return function (_: any, key: string, descriptor: PropertyDescriptor) {
+      const command = getOrCreateCommand(key, descriptor);
+      command.default_member_permissions = permissions;
+      return descriptor;
+    }
+  }
+
+  function Event() {
+    return function (target: any, key: string, descriptor: PropertyDescriptor) {
       commandInjections.push({
         kind: 'event',
         name: key,
         run: descriptor.value,
       })
 
-      logger(`Event ${key} injected in class ${_.constructor.name}`, 'green')
+      logger(`Event ${key} injected in class ${target.constructor.name}`, 'green')
       return descriptor;
     }
   }
@@ -393,6 +327,10 @@ export const Injections = () => {
     MentionableOption,
     NumberOption,
     AttachmentOption,
+    UserCommand,
+    MessageCommand,
+    NSFW,
+    DefaultMemberPermissions,
     Event,
     getInjections,
   }
